@@ -1,17 +1,37 @@
-(ns part2.core)
+(ns part2.core
+  (:require [clojure.string :as str]))
 (use '[clojure.string :only (join split)])
 
-(defn findRepititionIndex
+(defn findFirstRepitition
+  "Find first repetition"
+  [listWithAdditions]
+  (loop [x 0]
+    (def listForDuplicateCheck (subvec listWithAdditions 0 x))
+     ;;(println listForDuplicateCheck)
+    (println (nth listWithAdditions x))
+    (if (distinct? (sort listForDuplicateCheck))
+      (recur (+ x 1))
+      (last listForDuplicateCheck))
+    ))
+
+(defn createSumValues
   "Find Repitition Index"
   [list]
   (loop [x 0
-         uniqueValues []]
-    (when (< x (count list))
-      (println uniqueValues)
-      (println (some list uniqueValues))
-      (recur (+ x 1) (into [] (distinct (conj uniqueValues (nth list x))))))))
+         listSumValues []]
+    (def currentSum (reduce + (into [] (subvec list 0 x))))
+    (if (< x (count list))
+    (recur (+ x 1)
+           (into [](conj listSumValues currentSum)))
+    (into [] listSumValues))))
+
+(defn getAdventInput
+  "I get the input from input.txt which is filled with advent of code input"
+  []
+  (mapv read-string (into [](str/split-lines(slurp "input.txt")))))
 
 (defn foo
   "I don't do a whole lot."
   []
-  (findRepititionIndex [1 2 3 5 6 7 1 2 1]))
+  ;(println (createSumValues (getAdventInput)))
+  (findFirstRepitition (createSumValues (getAdventInput))))
